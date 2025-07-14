@@ -3,43 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <title>Minnesota Sales Tax Lookup</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 30px; }
-    input, button { padding: 8px; font-size: 16px; }
-    #result { margin-top: 20px; font-size: 18px; font-weight: bold; }
-  </style>
 </head>
 <body>
-  <h1>🔍 Minnesota Sales Tax Lookup</h1>
-  <p>Enter a city or ZIP code to see the current sales tax rate.</p>
-  <input type="text" id="locationInput" placeholder="e.g., Minneapolis or 55401" />
-  <button onclick="lookupTax()">Find Tax Rate</button>
-  <p id="result"></p>
+  <h1>MN Sales Tax Lookup by ZIP</h1>
+  <input type="text" id="zipInput" placeholder="Enter 5-digit ZIP">
+  <button onclick="lookupTaxRate()">Lookup</button>
+  <div id="result" style="margin-top:1em;"></div>
 
   <script>
-    const taxRates = {
-      "Minneapolis": 8.025,
-      "St Paul": 8.875,
-      "Duluth": 8.875,
-      "Rochester": 7.875,
-      "Bloomington": 7.525,
-      "55401": 8.025,
-      "55802": 8.875,
-      "55901": 7.875,
-      "55420": 7.525
-      // Add more as needed
-    };
+    let taxData = [];
 
-    function lookupTax() {
-      const input = document.getElementById("locationInput").value.trim();
-      const rate = taxRates[input];
-      const output = document.getElementById("result");
-      if (rate) {
-        output.innerText = `✅ Sales Tax for ${input}: ${rate}%`;
+    fetch('tax-rates.json')
+      .then(res => res.json())
+      .then(data => taxData = data)
+      .catch(err => {
+        console.error('Failed to load tax data', err);
+        document.getElementById('result').textContent = 'Error loading tax data.';
+      });
+
+    function lookupTaxRate() {
+      const zip = document.getElementById('zipInput').value.trim();
+      const r = document.getElementById('result');
+      if (!taxData.length) {
+        r.textContent = 'Tax data not yet loaded—please wait.';
+        return;
+      }
+      const match = taxData.find(e => e.zip === zip);
+      if (match) {
+        r.innerHTML = `
+          <strong>${match.city}, ${match.county} County</strong><br>
+          Combined Sales Tax Rate: ${match.combined_rate.toFixed(3)}%
+        `;
       } else {
-        output.innerText = `❌ Tax rate for "${input}" not found. Try another city or ZIP.`;
+        r.textContent = `No data found for ZIP code ${zip}.`;
       }
     }
   </script>
 </body>
 </html>
+
