@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Minnesota Sales Tax Lookup</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; }
+    input, button { padding: 8px; font-size: 16px; }
+    #result { margin-top: 20px; font-size: 18px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Minnesota Sales Tax Lookup</h1>
+  <p>Enter a city or ZIP code to see the current sales tax rate.</p>
+  <input type="text" id="locationInput" placeholder="e.g., Minneapolis or 55401" />
+  <button onclick="lookupTax()">Find Tax Rate</button>
+  <p id="result"></p>
+
+  <script>
+    const taxRates = {
+      "Minneapolis": 8.025,
+      "St Paul": 8.875,
+      "Duluth": 8.875,
+      "Rochester": 7.875,
+      "Bloomington": 7.525,
+      "55401": 8.025,
+      "55802": 8.875,
+      "55901": 7.875,
+      "55420": 7.525
+      // Add more as needed
+    };
+
+    function lookupTax() {
+      const input = document.getElementById("locationInput").value.trim();
+      const rate = taxRates[input];
+      const output = document.getElementById("result");
+      if (rate) {
+        output.innerText = `✅ Sales Tax for ${input}: ${rate}%`;
+      } else {
+        output.innerText = `❌ Tax rate for "${input}" not found. Try another city or ZIP.`;
+      }
+    }
+  </script>
+</body>
+</html>
